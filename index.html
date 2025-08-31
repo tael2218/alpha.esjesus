@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Donaciones</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-color: #ddd;
+            --dark-color: #2c3e50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--dark-color);
+            color: white;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            background-color: var(--secondary-color);
+            border-right: 1px solid var(--border-color);
+            transition: background-color 0.3s;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 25px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            line-height: 25px;
+            transition: width 0.5s ease;
+        }
+        
+        .donation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background-color: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .donation-item.completed {
+            background-color: #e8f5e9;
+            border-color: #c8e6c9;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .item-needed {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .donation-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .quantity-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .quantity-btn.decrease {
+            background-color: #ff6b6b;
+        }
+        
+        .quantity-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quantity-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0 8px;
+        }
+        
+        .current-donation {
+            font-size: 0.9em;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3d8b40;
+        }
+        
+        .donation-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .total {
+            font-weight: bold;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #submit-donation {
+            background-color: var(--accent-color);
+            padding: 12px 25px;
+            font-size: 1.1em;
+        }
+        
+        #submit-donation:hover {
+            background-color: #ff5252;
+        }
+        
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .thank-you h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .records-table th, .records-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .records-table th {
+            background-color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .records-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .empty-records {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .search-box input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .login-form h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .login-error {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .reset-btn {
+            background-color: #6c757d;
+            margin-right: 10px;
+        }
+        
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-container {
+                flex-direction: column;
+            }
+            
+            .donation-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .donation-controls {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Donaciones Solidarias</h1>
+            <p>Tu contribución ayuda a quienes más lo necesitan</p>
+        </header>
+        
+        <div class="tab-container">
+            <div class="tab active" data-tab="donar">Hacer Donación</div>
+            <div class="tab" data-tab="registros">Ver Registros</div>
+        </div>
+        
+        <div class="tab-content active" id="donar-tab">
+            <div class="form-group">
+                <label for="donor-name">Nombre:</label>
+                <input type="text" id="donor-name" placeholder="Ingresa tu nombre">
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">0%</div>
+            </div>
+            
+            <div id="donation-items">
+                <!-- Los elementos de donación se generarán dinámicamente -->
+            </div>
+            
+            <div class="donation-summary">
+                <h3>Resumen de tu donación</h3>
+                <div id="summary-items">
+                    <!-- El resumen se generará dinámicamente -->
+                </div>
+                <div class="summary-item total">
+                    <span>Total de artículos donados:</span>
+                    <span id="total-items">0</span>
+                </div>
+            </div>
+            
+            <div class="submit-section">
+                <button id="reset-donation" class="reset-btn">Reiniciar Donación</button>
+                <button id="submit-donation">Confirmar Donación</button>
+            </div>
+            
+            <div class="thank-you" id="thank-you">
+                <h2>¡Gracias por tu donación!</h2>
+                <p>Tu generosidad hace una diferencia real en la vida de las personas.</p>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="registros-tab">
+            <div id="login-section">
+                <div class="login-form">
+                    <h3>Acceso a Registros</h3>
+                    <div class="form-group">
+                        <label for="username">Usuario:</label>
+                        <input type="text" id="username" placeholder="Ingresa tu usuario">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" placeholder="Ingresa tu contraseña">
+                    </div>
+                    <div class="submit-section">
+                        <button id="login-button">Acceder</button>
+                    </div>
+                    <div class="login-error" id="login-error">
+                        Credenciales incorrectas. Intenta nuevamente.
+                    </div>
+                </div>
+            </div>
+            
+            <div id="records-section" style="display: none;">
+                <h2>Registros de Donaciones</h2>
+                
+                <div class="search-box">
+                    <input type="text" id="search-records" placeholder="Buscar por nombre...">
+                    <button id="clear-search">Limpiar</button>
+                </div>
+                
+                <div id="records-container">
+                    <!-- Los registros se mostrarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos iniciales de los artículos necesarios
+        const initialDonationItems = [
+            { id: 1, name: "Aceite", unit: "litros", needed: 10, current: 0 },
+            { id: 2, name: "Frijol", unit: "kilos", needed: 10, current: 0 },
+            { id: 3, name: "Azúcar", unit: "kilos", needed: 10, current: 0 },
+            { id: 4, name: "Arroz", unit: "kilos", needed: 15, current: 0 },
+            { id: 5, name: "Leche", unit: "litros", needed: 20, current: 0 }
+        ];
+        
+        // Credenciales de acceso
+        const ADMIN_USERNAME = "Admin";
+        const ADMIN_PASSWORD = "Xerox123.";
+        
+        // Almacenamiento de donaciones (en un caso real, esto vendría de una base de datos)
+        let donations = JSON.parse(localStorage.getItem('donations')) || [];
+        let isAuthenticated = false;
+        
+        // Copia de los artículos para trabajar
+        let donationItems = JSON.parse(JSON.stringify(initialDonationItems));
+        
+        // Función para cambiar entre pestañas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remover clase active de todas las pestañas y contenidos
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Agregar clase active a la pestaña clickeada
+                    tab.classList.add('active');
+                    
+                    // Mostrar el contenido correspondiente
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Si es la pestaña de registros, verificar autenticación
+                    if (tabId === 'registros') {
+                        if (!isAuthenticated) {
+                            document.getElementById('login-section').style.display = 'block';
+                            document.getElementById('records-section').style.display = 'none';
+                        } else {
+                            document.getElementById('login-section').style.display = 'none';
+                            document.getElementById('records-section').style.display = 'block';
+                            renderDonationRecords();
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Función para manejar el login
+        function setupLogin() {
+            const loginButton = document.getElementById('login-button');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginError = document.getElementById('login-error');
+            
+            loginButton.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    isAuthenticated = true;
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('records-section').style.display = 'block';
+                    renderDonationRecords();
+                    // Limpiar campos
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    loginError.style.display = 'none';
+                } else {
+                    loginError.style.display = 'block';
+                    passwordInput.value = '';
+                }
+            });
+            
+            // Permitir login con Enter
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loginButton.click();
+                }
+            });
+        }
+        
+        // Función para renderizar los elementos de donación
+        function renderDonationItems() {
+            const container = document.getElementById('donation-items');
+            container.innerHTML = '';
+            
+            donationItems.forEach(item => {
+                const remaining = item.needed - item.current;
+                const progress = (item.current / item.needed) * 100;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `donation-item ${remaining === 0 ? 'completed' : ''}`;
+                itemElement.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-needed">Necesitamos: ${item.needed} ${item.unit} | Faltan: ${remaining} ${item.unit}</div>
+                        ${item.current > 0 ? `<div class="current-donation">Has donado: ${item.current} ${item.unit}</div>` : ''}
+                    </div>
+                    <div class="donation-controls">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn decrease" onclick="adjustQuantity(${item.id}, -1)" ${item.current === 0 ? 'disabled' : ''}>-</button>
+                            <div class="quantity-value">${item.current}</div>
+                            <button class="quantity-btn" onclick="adjustQuantity(${item.id}, 1)" ${remaining === 0 ? 'disabled' : ''}>+</button>
+                        </div>
+                        <span>${item.unit}</span>
+                    </div>
+                `;
+                
+                container.appendChild(itemElement);
+            });
+            
+            updateProgressBar();
+            updateSummary();
+        }
+        
+        // Función para ajustar la cantidad con los botones +/-
+        function adjustQuantity(itemId, change) {
+            const item = donationItems.find(i => i.id === itemId);
+            
+            // Validar que la cantidad no sea negativa ni exceda lo necesario
+            if (change > 0) {
+                // Incrementar
+                const remaining = item.needed - item.current;
+                if (remaining > 0) {
+                    item.current += change;
+                }
+            } else {
+                // Decrementar
+                if (item.current > 0) {
+                    item.current += change;
+                }
+            }
+            
+            renderDonationItems();
+        }
+        
+        // Función para reiniciar la donación
+        function resetDonation() {
+            if (confirm("¿Estás seguro de que quieres reiniciar tu donación? Se perderán todos los artículos seleccionados.")) {
+                donationItems.forEach(item => {
+                    item.current = 0;
+                });
+                renderDonationItems();
+            }
+        }
+        
+        // Función para actualizar la barra de progreso general
+        function updateProgressBar() {
+            const totalNeeded = donationItems.reduce((sum, item) => sum + item.needed, 0);
+            const totalCurrent = donationItems.reduce((sum, item) => sum + item.current, 0);
+            const progressPercentage = totalNeeded > 0 ? (totalCurrent / totalNeeded) * 100 : 0;
+            
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = `${progressPercentage}%`;
+            progressBar.textContent = `${Math.round(progressPercentage)}%`;
+        }
+        
+        // Función para actualizar el resumen de donación
+        function updateSummary() {
+            const summaryContainer = document.getElementById('summary-items');
+            summaryContainer.innerHTML = '';
+            
+            let totalItems = 0;
+            
+            donationItems.forEach(item => {
+                if (item.current > 0) {
+                    const summaryItem = document.createElement('div');
+                    summaryItem.className = 'summary-item';
+                    summaryItem.innerHTML = `
+                        <span>${item.name}:</span>
+                        <span>${item.current} ${item.unit}</span>
+                    `;
+                    summaryContainer.appendChild(summaryItem);
+                    totalItems += item.current;
+                }
+            });
+            
+            document.getElementById('total-items').textContent = totalItems;
+        }
+        
+        // Función para enviar el formulario
+        function submitDonation() {
+            const donorName = document.getElementById('donor-name').value.trim();
+            const totalDonated = donationItems.reduce((sum, item) => sum + item.current, 0);
+            
+            if (!donorName) {
+                alert('Por favor ingresa tu nombre antes de confirmar la donación.');
+                return;
+            }
+            
+            if (totalDonated === 0) {
+                alert('Por favor selecciona al menos un artículo para donar.');
+                return;
+            }
+            
+            // Crear registro de donación
+            const donation = {
+                id: Date.now(),
+                donor: donorName,
+                date: new Date().toLocaleString(),
+                items: donationItems.filter(item => item.current > 0).map(item => ({
+                    name: item.name,
+                    quantity: item.current,
+                    unit: item.unit
+                })),
+                totalItems: totalDonated
+            };
+            
+            // Guardar la donación
+            donations.unshift(donation);
+            localStorage.setItem('donations', JSON.stringify(donations));
+            
+            // Actualizar los artículos iniciales (restar lo donado)
+            initialDonationItems.forEach(initialItem => {
+                const donatedItem = donationItems.find(item => item.id === initialItem.id);
+                if (donatedItem) {
+                    initialItem.current += donatedItem.current;
+                }
+            });
+            
+            // Restablecer la donación actual
+            donationItems = JSON.parse(JSON.stringify(initialDonationItems));
+            
+            // Mostrar mensaje de agradecimiento
+            document.getElementById('thank-you').style.display = 'block';
+            
+            // Desplazarse suavemente hacia el mensaje de agradecimiento
+            document.getElementById('thank-you').scrollIntoView({ behavior: 'smooth' });
+            
+            // Reiniciar el formulario después de 5 segundos
+            setTimeout(() => {
+                document.getElementById('donor-name').value = '';
+                renderDonationItems();
+                document.getElementById('thank-you').style.display = 'none';
+            }, 5000);
+        }
+        
+        // Función para renderizar los registros de donaciones
+        function renderDonationRecords(searchTerm = '') {
+            const recordsContainer = document.getElementById('records-container');
+            recordsContainer.innerHTML = '';
+            
+            let filteredDonations = donations;
+            if (searchTerm) {
+                filteredDonations = donations.filter(d => 
+                    d.donor.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            if (filteredDonations.length === 0) {
+                recordsContainer.innerHTML = `
+                    <div class="empty-records">
+                        ${searchTerm ? 'No se encontraron donaciones para la búsqueda' : 'Aún no hay donaciones registradas'}
+                    </div>
+                `;
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'records-table';
+            
+            // Encabezados de la tabla
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Donador</th>
+                        <th>Artículos</th>
+                        <th>Cantidad Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredDonations.map(donation => `
+                        <tr>
+                            <td>${donation.date}</td>
+                            <td>${donation.donor}</td>
+                            <td>
+                                ${donation.items.map(item => 
+                                    `${item.quantity} ${item.unit} de ${item.name}`
+                                ).join('<br>')}
+                            </td>
+                            <td>${donation.totalItems} artículos</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            
+            recordsContainer.appendChild(table);
+        }
+        
+        // Función para buscar en los registros
+        function setupSearch() {
+            const searchInput = document.getElementById('search-records');
+            const clearButton = document.getElementById('clear-search');
+            
+            searchInput.addEventListener('input', () => {
+                renderDonationRecords(searchInput.value.trim());
+            });
+            
+            clearButton.addEventListener('click', () => {
+                searchInput.value = '';
+                renderDonationRecords();
+            });
+        }
+        
+        // Inicializar el formulario cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDonationItems();
+            setupTabs();
+            setupLogin();
+            setupSearch();
+            document.getElementById('submit-donation').addEventListener('click', submitDonation);
+            document.getElementById('reset-donation').addEventListener('click', resetDonation);
+        });
+    </script>
+</body>
+</html>
