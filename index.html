@@ -465,8 +465,8 @@
         // =======================================================================
         // CONFIGURACIÓN DE JSONBIN - REEMPLAZA ESTOS VALORES CON LOS TUYOS
         // =======================================================================
-        const 68bddf0cae596e708fe60a12 = '68bddf0cae596e708fe60a12'; // Reemplaza con el ID de tu bin
-        const $2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe = '$2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe'; // Reemplaza con tu Secret Key
+        const BIN_ID = '68bddf0cae596e708fe60a12'; // Reemplaza con el ID de tu bin
+        const API_KEY = '$2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe'; // Reemplaza con tu Secret Key
         // =======================================================================
         
         // Variables globales
@@ -491,17 +491,17 @@
         async function loadData() {
             try {
                 hideError();
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${68bddf0cae596e708fe60a12}/latest`, {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                     headers: {
-                        'X-Master-Key': $2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe
+                        'X-Master-Key': API_KEY
                     }
                 });
                 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        showError('No se encontró la base de datos. Verifica el 68bddf0cae596e708fe60a12.');
+                        showError('No se encontró la base de datos. Verifica el BIN_ID.');
                     } else if (response.status === 403) {
-                        showError('Acceso denegado. Verifica tu $2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe.');
+                        showError('Acceso denegado. Verifica tu API_KEY.');
                     } else {
                         throw new Error('Error al cargar los datos');
                     }
@@ -553,11 +553,11 @@
                     donations
                 };
                 
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${68bddf0cae596e708fe60a12}`, {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Master-Key': $2a$10$q9RsOzQCRjBoLd0pnGMOZOG5im7v5RrmBUClyiUL03tq.r69ClxRe
+                        'X-Master-Key': API_KEY
                     },
                     body: JSON.stringify(dataToSave)
                 });
